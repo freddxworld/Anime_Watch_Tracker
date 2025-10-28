@@ -1,15 +1,26 @@
-import express, { Request, Response } from "express";
-import dotenv from 'dotenv';
-
+import dotenv from "dotenv"
 dotenv.config();
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+import app from "./app";
+import sequelize from "./database/connection";
+import Anime from "./models/anime";
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Anime watch tracker API ir running");
-});
+const Port = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-});
+async function start() {
+  try{
+    await sequelize.authenticate();
+    console.log("✅ database connected");
+
+    await sequelize.sync({alter: true}); //creates and updates tables
+    console.log("✅ models synched");
+
+    app.listen(Port, () => {
+      console.log('✅ server listening at http://localhost:${PORT}');
+    });
+  } catch (err) {
+    console.error("❌ Failed to start server", err);
+    process.exit(1);
+  }
+}
+start();
