@@ -24,8 +24,10 @@ export const getAllAnime = async (req: Request, res: Response) => {
 export const getAnimeById = async (req : Request, res: Response) => {
     try {
         const anime = await Anime.findByPk(req.params.id);
-        if(!anime) return res.status(404).json({message: "anime not found"});
-        res.status(200).json
+        if(!anime){
+            return res.status(404).json({message: "anime not found"});
+        }
+        res.status(200).json(anime);
     } catch (error){
         res.status(400).json({message: "error with fetching anime"});
     }
