@@ -6,9 +6,10 @@ import {
     updateAnime,
     deleteAnime
 } from "../controllers/animeControl";
+import { authenticateToken } from "../middleware/authMiddleware";
 
 const router = Router();
-
+// public routes
 //post /anime --> create a new anime
 router.post("/", createAnime);
 
@@ -23,5 +24,10 @@ router.put("/:id", updateAnime);
 
 //delete /anime by id --> delete anime by id
 router.delete("/:id", deleteAnime);
+
+// Protected routes
+router.post("/", authenticateToken, createAnime);
+router.put("/:id", authenticateToken, updateAnime);
+router.delete("/:id", authenticateToken, deleteAnime);
 
 export default router;
