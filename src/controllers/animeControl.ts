@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Anime from "../models/anime";
-import { EmptyResultError } from "sequelize";
+import {Op} from "sequelize";
+import { stat } from "fs";
 
 // create anime
 export const createAnime = async (req: Request, res: Response) => {
@@ -14,12 +15,25 @@ export const createAnime = async (req: Request, res: Response) => {
 // find all anime
 export const getAllAnime = async (req: Request, res: Response) => {
     try{
-        const allAnime = await Anime.findAll(); 
-        res.status(200).json(allAnime)
-    } catch (error){
-        res.status(500).json({message: "Failed with getting anime list", error});
-    };
-} 
+        const { title, status, sort = "createdAt", order = "DESC"} = req.query;
+        const whereClause: any = {}
+        if (title) {
+            whereClause.title = { [Op.like]: `%${title}%`};
+        }
+        if (status) {
+            whereClause.status = status;
+        }
+        const animeList = await Anime.findAll({
+            where: whereClause,
+            order: [[String(sort), String(order).toUpperCase()]],
+        });
+
+        res.status(200).json(animeList);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to get anime list", error});
+    }
+}; 
 // find single anime
 export const getAnimeById = async (req : Request, res: Response) => {
     try {
