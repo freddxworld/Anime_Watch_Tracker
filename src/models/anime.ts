@@ -5,6 +5,7 @@ class Anime extends Model {
     public id!: number;
     public title!: string;
     public episodes!: number;
+    public status!: string;
 }
 Anime.init(
  {
@@ -19,6 +20,11 @@ Anime.init(
     },
     episodes: {
         type: DataTypes.INTEGER,
+    },
+    status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "watching",
     },
  },
  {
