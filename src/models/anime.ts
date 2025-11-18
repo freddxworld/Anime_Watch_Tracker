@@ -1,11 +1,16 @@
 import sequelize from "../database/connection";
 import { DataType, DataTypes, Model } from "sequelize";
+import User from "./user";
 
 class Anime extends Model {
     public id!: number;
     public title!: string;
     public episodes!: number;
     public status!: string;
+    public userId!: Number;
+
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
 }
 Anime.init(
  {
@@ -26,6 +31,11 @@ Anime.init(
         allowNull: false,
         defaultValue: "watching",
     },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {model: User, key: "id"},
+    },
  },
  {
     sequelize,
@@ -34,5 +44,6 @@ Anime.init(
     timestamps: true,
  }
 );
+Anime.belongsTo(User, {foreignKey: "userId"});
 
 export default Anime;
