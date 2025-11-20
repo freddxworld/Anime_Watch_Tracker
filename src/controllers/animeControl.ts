@@ -56,6 +56,9 @@ export const updateAnime = async (req: Request, res: Response) => {
     try{
         const anime = await Anime.findByPk(req.params.id);
         if (!anime) return res.status(404).json({message: "anime not found"});
+        if (anime.userId !== req.user!.id){
+            return res.status(403).json({message: "Not auth to update this anime"});
+        }
         await anime.update(req.body);
         res.status(200).json(anime);
     } catch (error){
@@ -69,7 +72,9 @@ export const deleteAnime = async (req: Request, res: Response) => {
     try{
         const anime = await Anime.findByPk(req.params.id);
         if (!anime) return res.status(404).json({message: "anime not found"});
-
+        if (anime.userId! == req.user!.id) {
+            return res.status(403).json({message: "Not auth to delete this anime"})
+        }
         await anime.destroy();
         res.status(204).send();
     } catch (error){
