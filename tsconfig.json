@@ -7,8 +7,11 @@
     "strict": true,                      // enables all strict type checking
     "esModuleInterop": true,             // allows default imports from CJS modules
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true                 // speeds up build
+    "skipLibCheck": true,               // speeds up build
+    "typeRoots": ["./src/types", "./node_modules/@types"],
   },
-  "include": ["src"],                    // compile everything in src
+  "include": [
+    "src",
+    "src/types/**/*.ts"],                    // compile everything in src
   "exclude": ["node_modules"]            // ignore node_modules
 }

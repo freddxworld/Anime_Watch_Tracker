@@ -2,11 +2,15 @@ import { Request, Response } from "express";
 import Anime from "../models/anime";
 import {Op} from "sequelize";
 import { stat } from "fs";
+import User from "../models/user";
 
 // create anime
 export const createAnime = async (req: Request, res: Response) => {
     try{
-        const newAnimeData = await Anime.create(req.body);
+        const newAnimeData = await Anime.create({
+            ...req.body,
+            userId: req.user!.id
+        });
         res.status(201).json(newAnimeData);
     } catch (error){
         res.status(400).json({message: "Error creating new anime", error});
