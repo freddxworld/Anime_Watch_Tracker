@@ -7,6 +7,8 @@ import {
     deleteAnime
 } from "../controllers/animeControl";
 import { authenticateToken } from "../middleware/authMiddleware";
+import { validateBody } from "../middleware/validate";
+import { createAnimeSchema } from "../validation/animeSchemas";
 
 const router = Router();
 // public routes
@@ -16,7 +18,7 @@ router.get("/", getAllAnime);
 router.get("/:id", getAnimeById);
 
 // Protected routes
-router.post("/", authenticateToken, createAnime);   // Create new anime
+router.post("/", authenticateToken,validateBody(createAnimeSchema), createAnime);   // Create new anime
 router.put("/:id", authenticateToken, updateAnime); // Edit anime
 router.delete("/:id", authenticateToken, deleteAnime); // Delete anime
 
