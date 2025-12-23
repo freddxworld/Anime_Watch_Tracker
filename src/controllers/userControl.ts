@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
+import { sendError } from "../utils/errorHandler";
+import { send } from "node:process";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -12,7 +14,7 @@ export const registerUser = async (req: Request, res: Response) => {
          // check if username exists
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser){
-        return res.status(400).json({message: "Email already registered"});
+            return sendError(res, 400, "Email already registered")
         }
 
         // hash password
@@ -30,9 +32,9 @@ export const registerUser = async (req: Request, res: Response) => {
             message: "User registerd succesfully",
             user: {id: newUser.id, username: newUser.username, email: newUser.email},
         });
-    } catch (err) {
+    } catch (err: any) {
         console.error(err);
-        res.status(500).json({message: "Server error registering user"});
+        return sendError(res, 500, "Server error registering user");
     }
 };
 
@@ -43,12 +45,12 @@ export const loginUser = async (req: Request, res: Response) => {
         // find user
         const user = await User.findOne({ where: {email}});
         if(!user){
-            return res.status(400).json({message: "invalid credentials"});
+            return sendError(res, 400, "no user found")
         }
         // check password
         const isMatch = await bcrypt.compare(password, user.passwordHash);
         if(!isMatch){
-            return res.status(400).json({message: "invalid credentials"});
+            return sendError(res, 400, "incorrect password")
         }
 
         // sign in token
@@ -65,7 +67,7 @@ export const loginUser = async (req: Request, res: Response) => {
         });
     } catch (err){
         console.error(err);
-        res.status(500).json({message: "server error logging in"});
+        return sendError(res, 500, "server error logging in")
     }
 };
 export default{
