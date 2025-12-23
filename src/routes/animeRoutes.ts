@@ -9,6 +9,7 @@ import {
 import { authenticateToken } from "../middleware/authMiddleware";
 import { validateBody } from "../middleware/validate";
 import { createAnimeSchema } from "../validation/animeSchemas";
+import { updateAnimeSchema } from "../validation/animeSchemas";
 
 const router = Router();
 // public routes
@@ -19,7 +20,7 @@ router.get("/:id", getAnimeById);
 
 // Protected routes
 router.post("/", authenticateToken,validateBody(createAnimeSchema), createAnime);   // Create new anime
-router.put("/:id", authenticateToken, updateAnime); // Edit anime
+router.put("/:id", authenticateToken, validateBody(updateAnimeSchema), updateAnime); // Edit anime
 router.delete("/:id", authenticateToken, deleteAnime); // Delete anime
 
 export default router;

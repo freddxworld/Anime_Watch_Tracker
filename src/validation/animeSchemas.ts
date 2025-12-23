@@ -6,3 +6,5 @@ export const createAnimeSchema = z.object({
     totalEpisodes: z.number().int().positive(),
     status: z.enum(["watching", "completed", "planned"]),
 });
+
+export const updateAnimeSchema = createAnimeSchema.partial()
