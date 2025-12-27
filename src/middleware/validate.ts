@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
+import { sendError } from "../utils/errorHandler";
 
 export const validateBody = (schema: z.ZodTypeAny) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -23,12 +24,7 @@ export const validateBody = (schema: z.ZodTypeAny) => {
         }
       };
       traverse(tree);
-
-      return res.status(400).json({
-        statusCode: 400,
-        message: "Validation failed",
-        errors: formattedErrors,
-      });
+      return sendError(res, 400, "Validation failed", formattedErrors);
     }
 
     req.body = result.data; // cleaned + validated

@@ -1,23 +1,28 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import animeRoutes from "./routes/animeRoutes";
 import userRoutes from "./routes/userRoutes";
+import { sendError } from "./utils/errorHandler";
 
 const app = express();
 app.use(express.json());
 
-//optional simple health check
+// optional simple health check
 app.get("/", (req, res) => res.send("API running"));
 
-//mount anime router
-// will make any anime routes be defined with /api/anime
+// mount anime router
 app.use("/api/anime", animeRoutes);
-//mount user routes
+// mount user routes
 app.use("/api/users", userRoutes);
 
-//handles any middle ware errors
-app.use((err: any, req: any, res: any, next: any) => {
+// centralized error handler for all middleware errors
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
-    res.status(err.status || 500).json({message: err.message || "internal server error"})
+    // Use sendError to standardize response
+    return sendError(
+        res,
+        err.status || 500,
+        err.message || "Internal server error"
+    );
 });
 
 export default app;

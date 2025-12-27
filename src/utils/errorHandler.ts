@@ -1,17 +1,30 @@
-interface ErrorResponse {
+import { Response } from "express";
+
+export interface ApiError {
+  field?: string;
+  message: string;
+}
+
+export interface ErrorResponse {
   statusCode: number;
   message: string;
-  errors?: Record<string, string[]>;
+  errors?: ApiError[];
 }
 
 export const sendError = (
-  res: any,
+  res: Response,
   statusCode: number,
   message: string,
-  errors?: Record<string, string[]>
+  errors?: ApiError[]
 ) => {
-  const payload: ErrorResponse = { statusCode, message };
-  if (errors) payload.errors = errors;
+  const payload: ErrorResponse = {
+    statusCode,
+    message,
+  };
+
+  if (errors && errors.length > 0) {
+    payload.errors = errors;
+  }
 
   return res.status(statusCode).json(payload);
 };

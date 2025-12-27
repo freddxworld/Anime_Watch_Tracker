@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { sendError } from "../utils/errorHandler";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -12,7 +13,7 @@ export const authenticateToken = (
     const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
-        return res.status(401).json({message: "Access denied. No token provided"});
+        return sendError(res, 401, "Access denied no token provided")
     }
 
     try {
@@ -20,6 +21,6 @@ export const authenticateToken = (
         req.user = decoded;
         next();
     } catch (err) {
-        res.status(403).json({ message: "Invalid or expired token." });
+        return sendError(res, 403, "Invalid or expired auth token")
     }
 };
